@@ -1,5 +1,6 @@
 import {Component, ChangeEvent} from 'react';
 import ITutorialData from "../types/ITutorialData";
+import TutorialDataService from '../services/service';
 
 type Props = {};
 type State = ITutorialData & {
@@ -12,6 +13,7 @@ export default class AddTutorialComponents extends Component<Props, State> {
         this.onChangeTitle = this.onChangeTitle.bind(this);
         this.onChangeDescription = this.onChangeDescription.bind(this);
         this.newTutorial = this.newTutorial.bind(this);
+        this.saveTutorial = this.saveTutorial.bind(this);
 
         this.state = {
             id: null,
@@ -35,11 +37,34 @@ export default class AddTutorialComponents extends Component<Props, State> {
     }
 
     newTutorial() {
-
+        this.setState({
+            id: null,
+            title: "",
+            description: "",
+            published: false,
+            submitted: false
+        })
     }
 
     saveTutorial(){
+        const data:ITutorialData = {
+            title: this.state.title,
+            description: this.state.description,
+        }
 
+        TutorialDataService.create(data)
+            .then(response =>{
+                this.setState({
+                    id: response.data.id,
+                    title: response.data.title,
+                    description: response.data.description,
+                    published: response.data.published,
+                    submitted: true
+                });
+            })
+            .catch(e =>{
+                console.log(e)
+            })
     }
 
     render() {
